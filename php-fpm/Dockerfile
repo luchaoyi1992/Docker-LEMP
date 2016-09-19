@@ -51,14 +51,14 @@ RUN if [ ${INSTALL_OPCACHE} = true ]; then \
 ;fi
 
 
-ADD ./xijinfa.ini /usr/local/etc/php/conf.d
-ADD ./xijinfa.pool.conf /usr/local/etc/php-fpm.d/
+ADD ./test.ini /usr/local/etc/php/conf.d
+ADD ./test.pool.conf /usr/local/etc/php-fpm.d/
 
 RUN rm -r /var/lib/apt/lists/*
 
 RUN usermod -u 1000 www-data
 
-WORKDIR /var/www/xijinfa
+WORKDIR /var/www/test
 
 CMD ["php-fpm"]
 

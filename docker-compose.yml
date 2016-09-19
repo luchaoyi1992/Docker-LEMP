@@ -37,7 +37,7 @@ services:
         extra_hosts:
             - "dockerhost:10.0.75.1"
         environment:
-            - PHP_IDE_CONFIG="serverName=xijinfa"
+            - PHP_IDE_CONFIG="serverName=test"
         container_name: php-fpm
 
 #### Nginx Server Container ##################################
@@ -89,8 +89,7 @@ services:
     volumes_source:
         image: tianon/true
         volumes:
-            - ../:/var/www/xijinfa
-            - ../../test/:/var/www/test
+            - ../:/var/www/test
         container_name: volumes_source
 
 #### 数据持久 ################################
