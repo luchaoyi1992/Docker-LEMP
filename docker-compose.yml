@@ -1,0 +1,103 @@
+version: '2'
+
+services:
+
+#### Workspace Utilities Container ###########################
+
+    workspace:
+        build:
+            context: ./workspace
+            args:
+                - INSTALL_XDEBUG=false
+                - INSTALL_WORKSPACE_SSH=false
+        volumes_from:
+            - volumes_source
+        extra_hosts:
+            - "dockerhost:10.0.75.1"
+        ports:
+           - "22:22"
+        tty: true
+        container_name: workspace
+
+#### PHP-FPM Container #######################################
+
+    php-fpm:
+        build:
+            context: ./php-fpm
+            args:
+                - INSTALL_XDEBUG=true
+                - INSTALL_MEMCACHED=false
+                - INSTALL_OPCACHE=true
+        volumes_from:
+            - volumes_source
+        expose:
+            - "9000"
+        links:
+            - workspace
+        extra_hosts:
+            - "dockerhost:10.0.75.1"
+        environment:
+            - PHP_IDE_CONFIG="serverName=xijinfa"
+        container_name: php-fpm
+
+#### Nginx Server Container ##################################
+
+    nginx:
+        build:
+            context: ./nginx
+            args:
+                - PHP_UPSTREAM=php-fpm
+        volumes_from:
+            - volumes_source
+        volumes:
+            - ./logs/nginx/:/var/log/nginx
+        ports:
+            - "8080:80"
+            - "443:443"
+        links:
+            - php-fpm
+        container_name: nginx
+
+#### MySQL #########################################
+
+    mysql:
+        image: luchaoyi1992/mysql
+        volumes_from:
+            - volumes_data
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: homestead
+            MYSQL_USER: homestead
+            MYSQL_PASSWORD: secret
+            MYSQL_ROOT_PASSWORD: root
+        container_name: mysql
+
+#### Redis #########################################
+
+    redis:
+        image: luchaoyi1992/redis
+        volumes_from:
+            - volumes_data
+        ports:
+            - "6379:6379"
+        container_name: redis
+
+
+#### 网站代码 ######################
+
+    volumes_source:
+        image: tianon/true
+        volumes:
+            - ../:/var/www/xijinfa
+            - ../../test/:/var/www/test
+        container_name: volumes_source
+
+#### 数据持久 ################################
+
+    volumes_data:
+        image: tianon/true
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+            - ./data/redis:/data
+        container_name: volumes_data
