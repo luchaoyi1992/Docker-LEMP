@@ -1,2 +1,2 @@
 # Docker-LEMP
-Docker compose lemp stack
+This is my personal lemp docker develop environment.
