@@ -20,11 +20,8 @@ COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 #####################################
 # Opcache:
 #####################################
-ARG INSTALL_OPCACHE=true
-RUN if [ ${INSTALL_OPCACHE} = true ]; then \
-    docker-php-ext-install opcache && \
-    docker-php-ext-enable opcache \
-;fi
+
+RUN docker-php-ext-install opcache && docker-php-ext-enable opcache 
 
 
 ADD ./xijinfa.ini /usr/local/etc/php/conf.d

@@ -26,7 +26,6 @@ services:
             context: ./php-fpm
             args:
                 - INSTALL_XDEBUG=true
-                - INSTALL_OPCACHE=true
         volumes_from:
             - volumes_source
         expose:
