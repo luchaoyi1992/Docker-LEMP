@@ -9,7 +9,6 @@ services:
             context: ./workspace
             args:
                 - INSTALL_XDEBUG=false
-                - INSTALL_WORKSPACE_SSH=false
         volumes_from:
             - volumes_source
         extra_hosts:
@@ -17,6 +16,7 @@ services:
         ports:
            - "22:22"
         tty: true
+        restart: always
         container_name: workspace
 
 #### PHP-FPM Container #######################################
@@ -26,7 +26,6 @@ services:
             context: ./php-fpm
             args:
                 - INSTALL_XDEBUG=true
-                - INSTALL_MEMCACHED=false
                 - INSTALL_OPCACHE=true
         volumes_from:
             - volumes_source
@@ -37,7 +36,8 @@ services:
         extra_hosts:
             - "dockerhost:10.0.75.1"
         environment:
-            - PHP_IDE_CONFIG="serverName=test"
+            - PHP_IDE_CONFIG="serverName=xijinfa"
+        restart: always
         container_name: php-fpm
 
 #### Nginx Server Container ##################################
@@ -52,10 +52,11 @@ services:
         volumes:
             - ./logs/nginx/:/var/log/nginx
         ports:
-            - "8080:80"
+            - "80:80"
             - "443:443"
         links:
             - php-fpm
+        restart: always
         container_name: nginx
 
 #### MySQL #########################################
@@ -71,6 +72,7 @@ services:
             MYSQL_USER: homestead
             MYSQL_PASSWORD: secret
             MYSQL_ROOT_PASSWORD: root
+        restart: always
         container_name: mysql
 
 #### Redis #########################################
@@ -81,6 +83,7 @@ services:
             - volumes_data
         ports:
             - "6379:6379"
+        restart: always
         container_name: redis
 
 
@@ -89,7 +92,7 @@ services:
     volumes_source:
         image: tianon/true
         volumes:
-            - ../:/var/www/test
+            - ~/Code/PHP:/var/www
         container_name: volumes_source
 
 #### 数据持久 ################################
